@@ -37,9 +37,9 @@ const getOneContact = asynchandler(async(req,res) => {
    res.status(200).json(contact)
 })
 
-//Display all contacts with an age > 18
+// Display all contacts with an age > 18
 const getContactsAbove18 = asynchandler(async(req,res) => {
-    const contact = await Contact.find(({ age: { $gt: 18 } }))
+    const contact = await Contact.find({age: {$gt : 18}})
     if(!contact){
         res.status(400)
         throw new Error( 'Invalid')
@@ -47,15 +47,52 @@ const getContactsAbove18 = asynchandler(async(req,res) => {
     res.status(200).json(contact)
 })
 
-//display contact with age > 18 and name containing 'ah'
-const  getContactsAbove18WithNameAh = asynchandler(async(req,res) => {
-    const contact = await Contact.find({age: {$gt : 18}, name:/ah/i})
-    if(!contact){
-        res.status(400)
-        throw new Error( 'Enter a valid contact')
+// const getContactsAbove18 = asynchandler(async (req, res) => {
+//     try {
+//         const contacts = await Contact.find({ age: { $gt: 18 } }); 
+//         if (!contacts || contacts.length === 0) { 
+//             res.status(404).json({ message: 'No contacts found with age greater than 18' });
+//         } else {
+//             res.status(200).json(contacts); 
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ message: 'Server Error' });
+//     }
+// });
+
+// display contact with age > 18 and name containing 'ah'
+// const  getContactsAbove18WithNameAh = asynchandler(async(req,res) => {
+//     try{
+//     const contact = await Contact.find({age: {$gt : 18}, name:{$regex:/ah/i}})
+//     if(!contact){
+//         res.status(400).json({ message: 'No contacts found with age greater than 18 and containing "ah" in name' })
+//     }
+//     res.status(200).json(contact)
+// } catch(error){
+//     console.error(error);
+//     res.status(500).json({ message: 'Server Error' });
+// }
+//})
+
+const getContactsAbove18WithNameAh = asynchandler(async (req, res) => {
+    try {
+        const contacts = await Contact.find({
+            age: { $gt: 18 }, // Age greater than 18
+            name: { $regex: /ah/i } // Name contains "ah" (case-insensitive)
+        });
+
+        if (!contacts || contacts.length === 0) { // Check if no contacts found
+            res.status(404).json({ message: 'No contacts found with age greater than 18 and containing "ah" in name' });
+        } else {
+            res.status(200).json(contacts); // Return the contacts found
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
     }
-    res.status(200).json(contact)
-})
+});
+
 
 //update contact
 const updateContact = asynchandler (async (req, res) => {
@@ -63,7 +100,7 @@ const updateContact = asynchandler (async (req, res) => {
 
     if(!contact){
         res.status(400)
-        throw new Error('Goal not found')
+        throw new Error('Contact not found')
     }
 
     const updateContact = await Contact.findByIdAndUpdate(req.params.id, req.body, {new:true}) //the data can saved as a new resource here.
@@ -72,7 +109,7 @@ const updateContact = asynchandler (async (req, res) => {
 
 //delete contact lessthan 5
 const deleteContactbelow5 = asynchandler(async ( req,res ) => {
-    const contact = await Contact.findAndDelete({age: {$lt : 5}})
+    const contact = await Contact.findOneAndDelete({age: {$lt : 5}})
 
     if(!contact){
         res.status(400)

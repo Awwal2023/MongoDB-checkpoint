@@ -13,7 +13,10 @@ app.use(express.json())
 app.use(urlencoded({ extended:false}))
 
 //this the  route the user will go through to get the data
-app.use('/', require('./routes/routesContact.js'))
+app.use('/contact', require('./routes/routesContact.js'))
+app.use('/', require('./routes/routesCon.js'))
+app.use('/with', require('./routes/routesWith.js'))
+app.use('/del', require('./routes/routesDel.js'));
 
 // app.use(errorhandler)
 

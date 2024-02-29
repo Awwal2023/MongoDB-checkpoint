@@ -9,11 +9,6 @@ const contactSchema = mongoose.Schema({
         type: String,
         required:[true, 'please enter Firstname']
     },
-    email:{
-        type: String,
-        required:[true, 'please enter a valid'],
-        unique: true
-    },
     age:{
         type:Number,
         required:[true, 'please enter age']
